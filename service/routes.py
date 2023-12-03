@@ -20,7 +20,7 @@ Product Store Service with UI
 """
 from flask import jsonify, request, abort
 from flask import url_for  # noqa: F401 pylint: disable=unused-import
-from service.models import Product
+from service.models import Product, Category
 from service.common import status  # HTTP Status Codes
 from . import app
 
@@ -101,6 +101,26 @@ def create_products():
 #
 # PLACE YOUR CODE TO LIST ALL PRODUCTS HERE
 #
+@app.route("/products", methods=["GET"])
+def list_all_products():
+    """GEt all products from the database"""
+    products = []
+    name = request.args.get("name")
+    category = request.args.get("category")
+    available = request.args.get("available")
+
+    if name:
+        products = Product.find_by_name(name)
+    elif category is not None:
+        category_value = getattr(Category, category.upper())
+        products = Product.find_by_category(category_value)
+    elif available is not None:
+        products = Product.find_by_availability(available)
+    else:
+        products = Product.all()
+
+    return jsonify([product.serialize() for product in products]), status.HTTP_200_OK
+
 
 ######################################################################
 # R E A D   A   P R O D U C T
@@ -111,6 +131,7 @@ def create_products():
 #
 @app.route("/products/<product_id>")
 def get_products(product_id):
+    """Get product by it's id from the database"""
     product = Product.find(product_id=product_id)
     if not product:
         abort(
@@ -129,7 +150,9 @@ def get_products(product_id):
 # PLACE YOUR CODE TO UPDATE A PRODUCT HERE
 #
 @app.route("/products/<product_id>", methods=['PUT'])
-def update(self, product_id):
+def update(product_id):
+    """Update existing product into the database"""
+    check_content_type("application/json")
     product = Product.find(product_id=product_id)
     if not product:
         abort(
@@ -137,10 +160,11 @@ def update(self, product_id):
             f"No product with id ({product_id})",
         )
 
-    product.deserialize(request.get_json)
+    product.deserialize(request.get_json())
     product.id = product_id
     product.update()
     return product.serialize(), status.HTTP_200_OK
+    # return jsonify({'name': "ay ccc"}), status.HTTP_200_OK
 
 ######################################################################
 # D E L E T E   A   P R O D U C T
@@ -150,3 +174,15 @@ def update(self, product_id):
 #
 # PLACE YOUR CODE TO DELETE A PRODUCT HERE
 #
+
+@app.route("/products/<product_id>", methods=["DELETE"])
+def delete(product_id):
+    """Delete an existing product from the database"""
+    product = Product.find(product_id=product_id)
+    if not product:
+        abort(
+            status.HTTP_404_NOT_FOUND,
+            f"No product with id ({product_id})",
+        )
+    product.delete()
+    return "", status.HTTP_204_NO_CONTENT

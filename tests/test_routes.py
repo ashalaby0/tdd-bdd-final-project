@@ -188,7 +188,7 @@ class TestProductRoutes(TestCase):
 
     def test_get_product_not_found(self):
         """Test getting product by id from the database ( not exisiting id)"""
-        self._create_products()[0]
+        self._create_products()
         response = self.client.get(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -201,9 +201,44 @@ class TestProductRoutes(TestCase):
 
         # update the product
         new_product = response.get_json()
-        new_product["description"] = "updated unique description"
+        new_product["description"] = "updated_unique_description"
         response = self.client.put(f"{BASE_URL}/{new_product['id']}", json=new_product)
-        self.assertEqual(response.data, 'ay kalam')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        updated_product = response.json
-        self.assertEqual(response.json['description'], "updated unique description")
+        self.assertEqual(response.json['description'], "updated_unique_description")
+
+    def test_delete_product(self):
+        """Testing deleting an existing product"""
+        # ceate a product to delete
+        test_product = self._create_products()[0]
+        response = self.client.post(BASE_URL, json=test_product.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # delete the product
+        response = self.client.delete(f'{BASE_URL}/{test_product.id}')
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_list_all(self):
+        """Test getting all product from the database"""
+        self._create_products(5)
+        response = self.client.get(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.get_json()), 5)
+
+    def test_list_by_name(self):
+        """Test selecting product by name from the database"""
+        product = self._create_products()[0]
+        response = self.client.get(BASE_URL, query_string={"name": product.name})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json[0]['name'], product.name)
+
+    def test_list_products_by_category(self):
+        """Test selecting product by category from the database"""
+        product = self._create_products()[0]
+        response = self.client.get(BASE_URL, query_string={"category": product.category.name})
+        self.assertEqual(response.json[0]['category'], product.category.name)
+
+    def test_list_products_by_availability(self):
+        """Test selecting product by availability from the database"""
+        product = self._create_products()[0]
+        response = self.client.get(BASE_URL, query_string={"availability": product.available})
+        self.assertEqual(response.json[0]['available'], product.available)
