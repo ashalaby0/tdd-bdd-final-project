@@ -134,7 +134,7 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found[0].id, original_id)
         self.assertEqual(found[0].description, "updated description")
 
-    def test_update_a_product_with_no_id__should_raise_DataValidationError(self):
+    def test_update_a_product_with_no_id__should_raise_Data_validation_error(self):
         """Test update product details failure as id is None"""
         product = ProductFactory()
         app.logger.info(f'Product: {product} initiated')
@@ -145,7 +145,7 @@ class TestProductModel(unittest.TestCase):
         product.description = "updated description"
         with self.assertRaises(DataValidationError):
             product.update()
-    
+
     def test_delete_product(self):
         """Test delete product from the database"""
         product = ProductFactory()
