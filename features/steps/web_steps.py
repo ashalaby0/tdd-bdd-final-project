@@ -142,15 +142,13 @@ def step_impl(context, button):
 def step_impl(context, name):
     element_id = ID_PREFIX + name.lower().replace(' ', '_')
     found = WebDriverWait(context.driver, context.wait_seconds).until(
-        expected_conditions.text_to_be_present_in_element((By.id, "search_results"), name)
+        expected_conditions.text_to_be_present_in_element((By.ID, "search_results"), name)
     )
     assert(found)
 
 @then('I should not see "{name}" in the results')
 def step_impl(context, name):
-    element = WebDriverWait(context.driver, context.wait_seconds).until(
-        expected_conditions.presence_of_all_elements_located((By.ID, "search_results"))
-    )
+    element = context.driver.find_element_by_id('search_results')
     assert(name not in element.text)
 
 @then('I should see the message "{message}"')

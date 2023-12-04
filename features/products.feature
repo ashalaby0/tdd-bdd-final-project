@@ -51,8 +51,8 @@ Scenario: Read a Product
     Then I should see the message "Success"
     And I should see "Hat" in the "Name" field
     And I should see "A red fedora" in the "Description" field
-    And I should see "False" in the "Available" field
-    And I should see "Cloths" in the "Category" field
+    And I should see "True" in the "Available" dropdown
+    And I should see "Cloths" in the "Category" dropdown
     And I should see "59.95" in the "Price" field
 
 Scenario: Update a Product
@@ -61,16 +61,15 @@ Scenario: Update a Product
     And I press the "Search" button
     Then I should see the message "Success"
     And I should see "A red fedora" in the "Description" field
-    When I change "Name" to "UpdatedHatName"
+    When I change "Description" to "anotherDescription"
     And I press the "Update" button
     Then I should see the message "Success"
-    When I copy the "Id" field
-    And I press the "Clear" button
-    And I paste the "Id" field
-    And I press the "Retrieve" button
+    When I press the "Clear" button
+    And I set the "Name" to "Hat"
+    And I press the "Search" button
     Then I should see the message "Success"
-    And I should see "UpdatedHatName" in the "Name" field
-    But I should not see the "Hat" in the results
+    And I should see "anotherDescription" in the "Description" field
+    And I should not see "A red fedora" in the results
 
 Scenario: Delete a Product
     When I visit the "Home Page"
@@ -83,7 +82,7 @@ Scenario: Delete a Product
     When I press the "Clear" button
     And I set the "Name" to "Hat"
     And I press the "Search" button
-    Then I should not see the "Hat" in the "Name" field
+    Then I should not see "Hat" in the results
 
 Scenario: List all Products
     When I visit the "Home Page"
@@ -96,7 +95,7 @@ Scenario: List all Products
 
 Scenario: Search for products based on Category
     When I visit the "Home Page"
-    And I set the "Category" to "CLOTHS"
+    And I select "Cloths" in the "Category" dropdown
     And I press the "Search" button
     Then I should see "Hat" in the results
     And I should see "Shoes" in the results
@@ -105,15 +104,18 @@ Scenario: Search for products based on Category
 
 Scenario: Search for products based on Availability
     When I visit the "Home Page"
-    And I set the "Available" to "False"
+    And I press the "Clear" button
+    And I select "True" in the "Available" dropdown
     And I press the "Search" button
-    Then I should see "Shoes" in the results
-    But I should not see "Big Mac" in the results
-    And I should not see "Hat" in the results
-    And I should not see "Sheets" in the results
+    Then I should see the message "Success"
+    And I should see "Hat" in the results
+    And I should see "Big Mac" in the results
+    And I should see "Sheets" in the results
+    And I should not see "Shoes" in the results
 
 Scenario: Search for products based on Name
     When I visit the "Home Page"
+    And I press the "Clear" button
     And I set the "Name" to "Big Mac"
     And I press the "Search" button
     Then I should see "Big Mac" in the results
