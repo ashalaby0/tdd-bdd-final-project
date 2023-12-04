@@ -235,15 +235,37 @@ class TestProductModel(unittest.TestCase):
                 }
             )
     def test_product_deserialize_with_invalid_available_data_type(self):
-        """Test deserialize a product without available as string not bool"""
+        """Test deserialize a product with available as string not bool"""
 
         with self.assertRaises(DataValidationError):
             product = ProductFactory()
             result = product.deserialize(data={
                     "description": "product without a name", 
                     "available": "False",
-                    "category": "invalid category",
+                    "category": "CLOTHS",
                     "price": "10",
                     "name":"product with invalid availability value"
                 }
             )
+    
+    def test_product_deserialize_with_null_data_object(self):
+        """Test deserialize a product without data object"""
+
+        with self.assertRaises(DataValidationError):
+            product = ProductFactory()
+            result = product.deserialize(data=None)
+    
+    def test_product_deserialize_with_category(self):
+        """Test deserialize a product with invalid category"""
+
+        with self.assertRaises(DataValidationError):
+            product = ProductFactory()
+            result = product.deserialize(data={
+                    "description": "product without a name", 
+                    "available": False,
+                    "category": "invalid category",
+                    "price": "10",
+                    "name":"product with invalid category"
+                }
+            )
+    

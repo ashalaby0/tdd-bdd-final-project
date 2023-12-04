@@ -206,6 +206,21 @@ class TestProductRoutes(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json['description'], "updated_unique_description")
 
+    def test_update_product_with_non_existing_id(self):
+        """It should update return 404"""
+
+        # create a product to update
+        test_product = ProductFactory()
+        response = self.client.post(BASE_URL, json=test_product.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # update the product
+        new_product = response.get_json()
+        # update the product
+        response = self.client.put(f"{BASE_URL}/100000", json=new_product)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
     def test_delete_product(self):
         """Testing deleting an existing product"""
         # ceate a product to delete
@@ -216,6 +231,13 @@ class TestProductRoutes(TestCase):
         # delete the product
         response = self.client.delete(f'{BASE_URL}/{test_product.id}')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_product_with_non_existing_id(self):
+        """Testing deleting an existing product"""
+        # delete the product
+        response = self.client.delete(f'{BASE_URL}/10000')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
 
     def test_list_all(self):
         """Test getting all product from the database"""
@@ -240,5 +262,5 @@ class TestProductRoutes(TestCase):
     def test_list_products_by_availability(self):
         """Test selecting product by availability from the database"""
         product = self._create_products()[0]
-        response = self.client.get(BASE_URL, query_string={"availability": product.available})
+        response = self.client.get(BASE_URL, query_string={"available": product.available})
         self.assertEqual(response.json[0]['available'], product.available)
