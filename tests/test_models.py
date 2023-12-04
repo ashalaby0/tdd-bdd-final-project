@@ -220,3 +220,30 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(found[0].available, product.available)
         self.assertEqual(found[0].category, product.category)
         self.assertEqual(found[0].price, 10)
+
+
+    def test_product_deserialize_with_missing_args(self):
+        """Test deserialize a product without a name"""
+
+        with self.assertRaises(DataValidationError):
+            product = ProductFactory()
+            result = product.deserialize(data={
+                    "description": "product without a name", 
+                    "available": False,
+                    "category": "invalid category",
+                    "price": "$10"
+                }
+            )
+    def test_product_deserialize_with_invalid_available_data_type(self):
+        """Test deserialize a product without available as string not bool"""
+
+        with self.assertRaises(DataValidationError):
+            product = ProductFactory()
+            result = product.deserialize(data={
+                    "description": "product without a name", 
+                    "available": "False",
+                    "category": "invalid category",
+                    "price": "10",
+                    "name":"product with invalid availability value"
+                }
+            )
