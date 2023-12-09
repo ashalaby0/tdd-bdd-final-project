@@ -244,7 +244,7 @@ class TestProductRoutes(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.get_json()), 5)
 
-    def test_list_by_name(self):
+    def test_list_products_by_name(self):
         """Test selecting product by name from the database"""
         product = self._create_products()[0]
         response = self.client.get(BASE_URL, query_string={"name": product.name})
