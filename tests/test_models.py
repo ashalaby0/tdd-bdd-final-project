@@ -227,7 +227,7 @@ class TestProductModel(unittest.TestCase):
 
         with self.assertRaises(DataValidationError):
             product = ProductFactory()
-            result = product.deserialize(data={
+            product.deserialize(data={
                     "description": "product without a name", 
                     "available": False,
                     "category": "invalid category",
@@ -239,7 +239,7 @@ class TestProductModel(unittest.TestCase):
 
         with self.assertRaises(DataValidationError):
             product = ProductFactory()
-            result = product.deserialize(data={
+            product.deserialize(data={
                     "description": "product without a name", 
                     "available": "False",
                     "category": "CLOTHS",
@@ -253,14 +253,14 @@ class TestProductModel(unittest.TestCase):
 
         with self.assertRaises(DataValidationError):
             product = ProductFactory()
-            result = product.deserialize(data=None)
+            product.deserialize(data=None)
     
     def test_product_deserialize_with_category(self):
         """Test deserialize a product with invalid category"""
 
         with self.assertRaises(DataValidationError):
             product = ProductFactory()
-            result = product.deserialize(data={
+            product.deserialize(data={
                     "description": "product without a name", 
                     "available": False,
                     "category": "invalid category",
