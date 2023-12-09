@@ -220,7 +220,6 @@ class TestProductRoutes(TestCase):
         response = self.client.put(f"{BASE_URL}/100000", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-
     def test_delete_product(self):
         """Testing deleting an existing product"""
         # ceate a product to delete
@@ -237,7 +236,6 @@ class TestProductRoutes(TestCase):
         # delete the product
         response = self.client.delete(f'{BASE_URL}/10000')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
 
     def test_list_all(self):
         """Test getting all product from the database"""
